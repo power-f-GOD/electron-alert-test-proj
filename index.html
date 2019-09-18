@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hello, Electron-Alert!</title>
+  </head>
+
+  <body>
+    <h1>Hello, <span class="black">Electron</span><span class="deepskyblue">-Alert</span>!</h1>
+    <h3>Send message to electron-alert from Main process:</h3>
+    <label>
+      Message title:<span class="black">*</span>
+      <input type="text" class="message-title input" placeholder="Message title" />
+    </label>
+
+    <label>
+      Message type:
+      <select class="message-type input">
+        <option value="success">success</option>
+        <option value="error">error</option>
+        <option value="warning">warning</option>
+        <option value="info">info</option>
+        <option value="question">question</option>
+        <option value="exception">uncaught-exception</option>
+      </select>
+    </label>
+    <label>
+      Modal type:
+      <span class="black">
+        <select class="modal-type input">
+          <option value="alert">alert</option>
+          <option value="toast">toast</option>
+        </select>
+      </span>
+    </label>
+    <label>
+      Modal options:
+      <span class="black">
+        Position:
+        <select class="modal-position input">
+          <option value="top">top</option>
+          <option value="top-start">top-start</option>
+          <option value="top-end">top-end</option>
+          <option value="center">center</option>
+          <option value="center-start">center-start</option>
+          <option value="center-end">center-end</option>
+          <option value="bottom">bottom</option>
+          <option value="bottom-start">bottom-start</option>
+          <option value="bottom-end">bottom-end</option>
+        </select>
+        <span class="opt-for-alert black">
+          <input type="checkbox" class="cancel-button input" />show-cancel-button
+        </span>
+        <span class="opt-for-toast black hide">
+          Timer(ms): <input type='number' value='0' class="timer input" style="width: 100px;" />
+          <input type="checkbox" class="confirm-button input" />show-confirm-button
+        </span>
+      </span>
+    </label>
+    <label>
+      Message (HTML):<span class="black">*</span>
+      <textarea
+        class="message-text input"
+        placeholder="Send a message to Main process..."
+      ></textarea>
+    </label>
+    <label class="footer-label">
+      Message footer:
+      <input type="text" class="message-footer input" placeholder="Message footer" />
+    </label>
+    <button class="send-message">Send Message</button>
+    <br /><br />
+    <span class="status black"></span>
+    <!-- We are using Node.js <span id="node-version"></span>,
+    Chromium <span id="chrome-version"></span>,
+    and Electron <span id="electron-version"></span>. -->
+
+    <style>
+      body {
+        margin: 14px;
+      }
+
+      * {
+        box-sizing: border-box;
+        font-family: "Courier New", Courier, monospace;
+        background: rgb(54, 172, 219);
+        outline: none;
+        color: white;
+      }
+
+      b {
+        color: black;
+      }
+
+      label {
+        margin: 14px 0;
+        display: block;
+      }
+
+      textarea {
+        display: block;
+        width: 100%;
+        max-width: 550px;
+        resize: none;
+        height: 70px;
+        margin: 10px 0;
+      }
+
+      input,
+      textarea,
+      select,
+      button,
+      option {
+        border: 1px solid skyblue;
+        border-radius: 3px;
+        padding: 5px 10px;
+        color: black;
+        background: rgb(4, 150, 207);
+      }
+
+      input:focus,
+      textarea:focus,
+      button:focus,
+      select:focus {
+        background: black;
+        color: skyblue;
+      }
+
+      input::-webkit-input-placeholder,
+      textarea::-webkit-input-placeholder,
+      select::-webkit-input-placeholder {
+        color: skyblue;
+      }
+
+      button,
+      input[name='modal-type']
+      {
+        cursor: pointer;
+      }
+
+      .hide
+      {
+        display: none;
+      }
+
+      .black { color: #000; }
+
+      .deepskyblue { color: rgb(164, 237, 251); }
+
+      .warn {
+        color: darkred;
+      }
+    </style>
+    <!-- You can also require other files to run in this process -->
+    <script src="./renderer.js"></script>
+  </body>
+</html>
