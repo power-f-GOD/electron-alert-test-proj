@@ -65,6 +65,12 @@ button:disabled
   border-color: darkgrey;
 }
 
+span.status
+{
+  font-weight: bold; 
+  color: rgb(164, 237, 251);
+}
+
 .hide {
   display: none;
 }

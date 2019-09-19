@@ -77,7 +77,7 @@ app.on("ready", () => {
     }
 
     msg.html = msg.text ? msg.text : "Default text.";
-    e.returnValue = `Hello, <b>${process.env.USERNAME}</b>! I'm Main. I received your message. I will electron-alert it shortly to the ${msg.position}.`;
+    e.returnValue = `Hello, <b>${process.env.USERNAME}</b>! I'm Main. I received your message. I will electron-alert it to the ${msg.position} shortly.`;
 
     setTimeout(() => {
       alert.fireFrameless({ ...msg });
