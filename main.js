@@ -65,7 +65,8 @@ app.on("ready", () => {
   ipcMain.on("message", (e, arg) => {
     let msg = JSON.parse(arg);
 
-    msg.title = msg.title ? msg.title : "Default title!";
+    msg.title = msg.title ? msg.title : msg.type;
+    msg.title = msg.title[0].toUpperCase() + msg.title.slice(1);
 
     //make process throw exception just for testing
     if (msg.type == "uncaught-exception") {
@@ -81,9 +82,32 @@ app.on("ready", () => {
       return;
     }
 
-    msg.html = msg.text ? msg.text : "Default text.";
+    msg.html = msg.text ? msg.text : `Here is a sample ${msg.type} message!`;
     setTimeout(() => {
-      if (!alert.isVisible()) alert.fireFrameless({ ...msg });
+      if (!alert.isVisible())
+        alert.fireFrameless({ ...msg }).then(res => {
+          if (msg.showCancelButton)
+            if (res.value)
+              // alert.fireFrameless({
+              //   type: 'success',
+              //   title: 'Success',
+              //   text: 'You clicked OK to proceed.'
+              // });
+              Alert.fireToast({
+                type: "success",
+                title: "Success! You clicked OK.",
+                showConfirmButton: false,
+                timer: 3000
+              });
+            else
+              setTimeout(() => {
+                alert.fireFrameless({
+                  type: "error",
+                  title: "Cancelled",
+                  text: "You clicked on the cancel button."
+                });
+              }, 300);
+        });
     }, 350);
   });
 });

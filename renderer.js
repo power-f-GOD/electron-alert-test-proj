@@ -23,7 +23,10 @@ QAll(".input").forEach(inp => {
       Q(".opt-for-alert").classList.toggle("hide");
       Q(".opt-for-toast").classList.toggle("hide");
       Q(".footer-label").classList.toggle("hide");
-    }
+      Q(".text-label").classList.toggle("hide");
+    } else if (this.value == "warning" || this.value == "question")
+      Q(".cancel-button").checked = true;
+    else Q(".cancel-button").checked = false;
   });
 });
 
@@ -48,6 +51,7 @@ Q(".send-message").onclick = function() {
     msg.showConfirmButton = Q(".confirm-button").checked;
     msg.showCancelButton = false;
     msg.footer = null;
+    msg.text = null;
   }
 
   jsonMsg = JSON.stringify(msg);
