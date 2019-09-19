@@ -83,8 +83,7 @@ app.on("ready", () => {
 
     msg.html = msg.text ? msg.text : "Default text.";
     setTimeout(() => {
-      if (!alert.isVisible())
-        alert.fireFrameless({ ...msg });
+      if (!alert.isVisible()) alert.fireFrameless({ ...msg });
     }, 350);
   });
 });

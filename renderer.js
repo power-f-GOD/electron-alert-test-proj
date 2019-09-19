@@ -10,10 +10,9 @@ const ipcRenderer = require("electron").ipcRenderer,
 QAll(".input").forEach(inp => {
   inp.addEventListener("input", function() {
     updateStatusMsg();
-    this.addEventListener('keyup', function(e) {
-      if (e.keyCode == 13)
-        Q(".send-message").click();
-    })
+    this.addEventListener("keyup", function(e) {
+      if (e.keyCode == 13) Q(".send-message").click();
+    });
 
     if (this.value == "uncaught-exception")
       updateStatusMsg(
