@@ -22,7 +22,7 @@ label {
 textarea {
   display: block;
   width: 100%;
-  max-width: 550px;
+  max-width: 575px;
   resize: none;
   height: 70px;
   margin: 10px 0;
@@ -59,15 +59,13 @@ input[name="modal-type"] {
   cursor: pointer;
 }
 
-button:disabled
-{
+button:disabled {
   background: grey;
   border-color: darkgrey;
 }
 
-span.status
-{
-  font-weight: bold; 
+span.status {
+  font-weight: bold;
   color: rgb(164, 237, 251);
 }
 

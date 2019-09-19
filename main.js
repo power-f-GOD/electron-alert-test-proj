@@ -68,8 +68,11 @@ app.on("ready", () => {
     msg.title = msg.title ? msg.title : "Default title!";
 
     //make process throw exception just for testing
-    if (msg.type == "exception")
-      throw new Error("Exception thrown: A sample error occured.");
+    if (msg.type == "uncaught-exception") {
+      msg = "Exception thrown: A sample error occured in the main process.";
+      e.returnValue = `<span class='danger'>${msg}</span>`;
+      throw new Error(msg);
+    }
 
     if (msg.modalType == "toast") {
       Alert.fireToast({ ...msg });
@@ -77,11 +80,11 @@ app.on("ready", () => {
     }
 
     msg.html = msg.text ? msg.text : "Default text.";
-    e.returnValue = `Hello, <b>${process.env.USERNAME}</b>! I'm Main. I received your message. I will electron-alert it to the ${msg.position} shortly.`;
+    e.returnValue = `Hi, <b>${process.env.USERNAME}</b>! I'm Main. I received your ${msg.type} message. I will electron-alert it to the ${msg.position} of your screen in a second.`;
 
     setTimeout(() => {
       alert.fireFrameless({ ...msg });
-    }, 300);
+    }, 500);
   });
 });
 
