@@ -74,17 +74,18 @@ app.on("ready", () => {
       throw new Error(msg);
     }
 
+    e.returnValue = `Hi, <b>${process.env.USERNAME}</b>! I'm Main. I received your ${msg.type} message. I will electron-${msg.modalType} it to the ${msg.position} of your screen in a second.`;
+
     if (msg.modalType == "toast") {
       Alert.fireToast({ ...msg });
       return;
     }
 
     msg.html = msg.text ? msg.text : "Default text.";
-    e.returnValue = `Hi, <b>${process.env.USERNAME}</b>! I'm Main. I received your ${msg.type} message. I will electron-alert it to the ${msg.position} of your screen in a second.`;
-
     setTimeout(() => {
-      alert.fireFrameless({ ...msg });
-    }, 500);
+      if (!alert.isVisible())
+        alert.fireFrameless({ ...msg });
+    }, 350);
   });
 });
 

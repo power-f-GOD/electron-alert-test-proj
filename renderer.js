@@ -43,6 +43,7 @@ Q(".send-message").onclick = function() {
     msg.timer = Q(".timer").value;
     msg.showConfirmButton = Q(".confirm-button").checked;
     msg.showCancelButton = false;
+    msg.footer = null;
   }
 
   jsonMsg = JSON.stringify(msg);
