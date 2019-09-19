@@ -1,0 +1,82 @@
+body {
+  margin: 14px;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "Courier New", Courier, monospace;
+  background: rgb(54, 172, 219);
+  outline: none;
+  color: white;
+}
+
+b {
+  color: black;
+}
+
+label {
+  margin: 14px 0;
+  display: block;
+}
+
+textarea {
+  display: block;
+  width: 100%;
+  max-width: 550px;
+  resize: none;
+  height: 70px;
+  margin: 10px 0;
+}
+
+input,
+textarea,
+select,
+button,
+option {
+  border: 1px solid skyblue;
+  border-radius: 3px;
+  padding: 5px 10px;
+  color: black;
+  background: rgb(4, 150, 207);
+}
+
+input:focus,
+textarea:focus,
+button:focus,
+select:focus {
+  background: black;
+  color: skyblue;
+}
+
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder,
+select::-webkit-input-placeholder {
+  color: skyblue;
+}
+
+button,
+input[name="modal-type"] {
+  cursor: pointer;
+}
+
+button:disabled
+{
+  background: grey;
+  border-color: darkgrey;
+}
+
+.hide {
+  display: none;
+}
+
+.black {
+  color: #000;
+}
+
+.deepskyblue {
+  color: rgb(164, 237, 251);
+}
+
+.danger {
+  color: darkred;
+}

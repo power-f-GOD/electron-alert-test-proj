@@ -12,10 +12,10 @@ QAll(".input").forEach(inp => {
     updateStatusMsg();
     if (this.value == "exception")
       updateStatusMsg(
-        "<span class='warn'><b class='warn'>Note:</b> An error will be thrown, app will then quit.</span>"
+        "<b class='danger'>Caution: An error will be thrown, app will then quit.</b>"
       );
 
-    if (/modal-type/.test(this.className)) {
+    if (this.classList.contains('modal-type')) {
       Q(".opt-for-alert").classList.toggle("hide");
       Q(".opt-for-toast").classList.toggle("hide");
       Q(".footer-label").classList.toggle("hide");
@@ -58,6 +58,12 @@ Q(".send-message").onclick = function() {
     sendBtn.disabled = false;
   }, 350);
 };
+
+updateStatusMsg(`
+  Using Electron version: ${process.versions.electron}<br />
+  Using Chromium version: ${process.versions.chrome}<br />
+  Using Node version: ${process.versions.node}<br />
+`)
 
 function updateStatusMsg(text) {
   Q(".status").innerHTML = text || "";
