@@ -42,7 +42,8 @@ Q(".send-message").onclick = function() {
     footer: Q(".message-footer").value.trim(),
     modalType: Q(".modal-type").value,
     position: Q(".modal-position").value,
-    showCancelButton: Q(".cancel-button").checked
+    showCancelButton: Q(".cancel-button").checked,
+    modalFont: Q(".modal-font").value
   };
   sendBtn.disabled = true;
 
@@ -76,7 +77,8 @@ Q(".quit").onclick = function() {
     position: Q(".modal-position").value,
     showCancelButton: true,
     confirmButtonText: "Yes, please",
-    cancelButtonText: "Please, don't"
+    cancelButtonText: "Please, don't",
+    modalFont: Q(".modal-font").value
   };
   jsonMsg = JSON.stringify(msg);
   ipcRenderer.sendSync("quit", jsonMsg);

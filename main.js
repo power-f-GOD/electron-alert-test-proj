@@ -4,9 +4,35 @@
 
 const { ipcMain, app, BrowserWindow } = require("electron");
 const Alert = require("electron-alert");
+const head = [
+  `
+<style>
+  .monospace-font
+  { font-family: "Courier New", Courier, monospace; }
 
-const alert = new Alert(),
-  username = process.env.USERNAME;
+  .serif-font
+  { font-family: Georgia, 'Times New Roman', Times, serif; }
+
+  .sans-serif-font
+  { font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; }
+</style>
+`
+];
+
+const alert = new Alert(head),
+  username = process.env.USERNAME,
+  customClass = {
+    container: null,
+    popup: null,
+    header: null,
+    title: null,
+    closeButton: null,
+    icon: null,
+    // image: null, content: null, input: null, actions: null,
+    confirmButton: null,
+    cancelButton: null,
+    footer: null
+  };
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -51,6 +77,12 @@ const createWindow = () => {
 // Some APIs can only be used after this event occurs.
 app.on("ready", () => {
   createWindow();
+  Alert.fireToast({
+    title: `Logged on as ${username}`,
+    timer: 3000,
+    position: "top-end",
+    showConfirmButton: false
+  });
 
   process.on(
     "uncaughtException",
@@ -67,6 +99,8 @@ app.on("ready", () => {
   ipcMain.on("message", (e, msg) => {
     msg = JSON.parse(msg);
 
+    addCustomClass(msg.modalFont);
+
     msg.title = msg.title ? msg.title : msg.type;
     msg.title = msg.title[0].toUpperCase() + msg.title.slice(1);
 
@@ -80,54 +114,64 @@ app.on("ready", () => {
     e.returnValue = `Hi, <b>${username}</b>! I'm Main. I received your ${msg.type} message. I will electron-${msg.modalType} it to the ${msg.position} of your screen in a second.`;
 
     if (msg.modalType == "toast") {
-      Alert.fireToast({ ...msg });
+      Alert.fireToast({ ...msg, customClass: customClass });
       return;
     }
 
     msg.html = msg.text ? msg.text : `Here is a sample ${msg.type} message!`;
     setTimeout(() => {
       if (!alert.isVisible())
-        alert.fireFrameless({ ...msg }).then(res => {
-          if (msg.showCancelButton && /question|warning/.test(msg.type))
-            if (res.value)
-              // alert.fireFrameless({
-              //   type: 'success',
-              //   title: 'Success',
-              //   text: 'You clicked OK to proceed.'
-              // });
-              Alert.fireToast({
-                type: "success",
-                title: "Success! You clicked OK.",
-                showConfirmButton: false,
-                timer: 3000
-              });
-            else
-              setTimeout(() => {
-                alert.fireFrameless({
-                  type: "error",
-                  title: "Cancelled",
-                  text: "You clicked on the cancel button."
+        alert
+          .fireFrameless({
+            ...msg,
+            customClass: customClass
+          })
+          .then(res => {
+            if (msg.showCancelButton && /question|warning/.test(msg.type))
+              if (res.value)
+                Alert.fireToast({
+                  type: "success",
+                  title: "Success! You clicked OK.",
+                  showConfirmButton: false,
+                  timer: 3000
                 });
-              }, 300);
-        });
+              else
+                setTimeout(() => {
+                  alert.fireFrameless({
+                    type: "error",
+                    title: "Cancelled",
+                    text: "You clicked on the cancel button.",
+                    customClass: customClass
+                  });
+                }, 300);
+          });
     }, 350);
   });
 
-  let qAlert = new Alert();
+  let qAlert = new Alert(head);
 
   ipcMain.on("quit", (e, msg) => {
     msg = JSON.parse(msg);
+    msg.position = "center";
+    addCustomClass(msg.modalFont);
+
     if (!qAlert.isVisible())
       qAlert
-        .fireWithFrame({ ...msg }, "ElectronAlert - Quit", null, true)
+        .fireWithFrame(
+          { ...msg, customClass: customClass },
+          "ElectronAlert - Quit",
+          null,
+          true
+        )
         .then(res => {
           setTimeout(() => {
             if (res.value)
               qAlert
                 .fireWithFrame(
                   {
-                    title: `Have a nice day, <br />${username}!`,
-                    timer: 3000
+                    title: `Have a nice day,<br />${username}!`,
+                    timer: 3000,
+                    customClass: customClass
                   },
                   "ElectronAlert - Bye",
                   null,
@@ -138,9 +182,10 @@ app.on("ready", () => {
                 });
             else {
               Alert.fireToast({
-                title: "Welcome back!",
+                title: "Thanks for staying!",
                 timer: 3000,
-                position: "top-end"
+                position: "top-end",
+                customClass: customClass
               });
             }
           }, 300);
@@ -165,3 +210,7 @@ app.on("activate", () => {
     createWindow();
   }
 });
+
+function addCustomClass(className) {
+  for (let prop in customClass) customClass[prop] = className;
+}
