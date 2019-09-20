@@ -88,7 +88,7 @@ app.on("ready", () => {
     setTimeout(() => {
       if (!alert.isVisible())
         alert.fireFrameless({ ...msg }).then(res => {
-          if (msg.showCancelButton)
+          if (msg.showCancelButton && /question|warning/.test(msg.type))
             if (res.value)
               // alert.fireFrameless({
               //   type: 'success',

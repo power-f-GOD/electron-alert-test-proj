@@ -72,7 +72,7 @@ Q(".quit").onclick = function() {
   msg = {
     type: "question",
     title: "Quit",
-    html: "Are you sure you want to quit and exit the <b>main</b> process?",
+    html: "Are you sure you want to quit app and exit the <b>main</b> process?",
     position: Q(".modal-position").value,
     showCancelButton: true,
     confirmButtonText: 'Yes, please',
