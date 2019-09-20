@@ -20,6 +20,7 @@ const head = [
 ];
 
 const alert = new Alert(head),
+  quitAlert = new Alert(head),
   username = process.env.USERNAME,
   customClass = {
     container: null,
@@ -98,9 +99,7 @@ app.on("ready", () => {
 
   ipcMain.on("message", (e, msg) => {
     msg = JSON.parse(msg);
-
     addCustomClass(msg.modalFont);
-
     msg.title = msg.title ? msg.title : msg.type;
     msg.title = msg.title[0].toUpperCase() + msg.title.slice(1);
 
@@ -148,15 +147,13 @@ app.on("ready", () => {
     }, 350);
   });
 
-  let qAlert = new Alert(head);
-
   ipcMain.on("quit", (e, msg) => {
     msg = JSON.parse(msg);
     msg.position = "center";
     addCustomClass(msg.modalFont);
 
-    if (!qAlert.isVisible())
-      qAlert
+    if (!quitAlert.isVisible())
+      quitAlert
         .fireWithFrame(
           { ...msg, customClass: customClass },
           "ElectronAlert - Quit",
@@ -166,7 +163,7 @@ app.on("ready", () => {
         .then(res => {
           setTimeout(() => {
             if (res.value)
-              qAlert
+              quitAlert
                 .fireWithFrame(
                   {
                     title: `Have a nice day,<br />${username}!`,
