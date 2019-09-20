@@ -5,7 +5,8 @@
 const { ipcMain, app, BrowserWindow } = require("electron");
 const Alert = require("electron-alert");
 
-const alert = new Alert();
+const alert = new Alert(),
+  username = process.env.USERNAME;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -24,6 +25,7 @@ const createWindow = () => {
   });
 
   mainWindow.once("ready-to-show", () => {
+    mainWindow.removeMenu();
     mainWindow.show();
   });
 
@@ -62,8 +64,8 @@ app.on("ready", () => {
     e.returnValue = alert.isVisible();
   });
 
-  ipcMain.on("message", (e, arg) => {
-    let msg = JSON.parse(arg);
+  ipcMain.on("message", (e, msg) => {
+    msg = JSON.parse(msg);
 
     msg.title = msg.title ? msg.title : msg.type;
     msg.title = msg.title[0].toUpperCase() + msg.title.slice(1);
@@ -75,7 +77,7 @@ app.on("ready", () => {
       throw new Error(msg);
     }
 
-    e.returnValue = `Hi, <b>${process.env.USERNAME}</b>! I'm Main. I received your ${msg.type} message. I will electron-${msg.modalType} it to the ${msg.position} of your screen in a second.`;
+    e.returnValue = `Hi, <b>${username}</b>! I'm Main. I received your ${msg.type} message. I will electron-${msg.modalType} it to the ${msg.position} of your screen in a second.`;
 
     if (msg.modalType == "toast") {
       Alert.fireToast({ ...msg });
@@ -109,6 +111,34 @@ app.on("ready", () => {
               }, 300);
         });
     }, 350);
+  });
+
+  let qAlert = new Alert();
+
+  ipcMain.on("quit", (e, msg) => {
+    msg = JSON.parse(msg);
+    if (!qAlert.isVisible())
+      qAlert.fireWithFrame({ ...msg }, "ElectronAlert - Quit", null, true).then(res => {
+        setTimeout(() => {
+          if (res.value)
+            qAlert
+              .fireWithFrame({
+                title: `Have a nice day, <br />${username}!`,
+                timer: 3000
+              }, 'ElectronAlert - Bye', null, true)
+              .then(() => {
+                process.exit(1);
+              });
+          else {
+            Alert.fireToast({
+              title: "Welcome back!",
+              timer: 3000,
+              position: "top-end"
+            });
+          }
+        }, 300);
+      });
+    e.returnValue = true;
   });
 });
 

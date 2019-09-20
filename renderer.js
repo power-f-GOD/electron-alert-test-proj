@@ -7,6 +7,9 @@ const ipcRenderer = require("electron").ipcRenderer,
   Q = document.querySelector.bind(document),
   QAll = document.querySelectorAll.bind(document);
 
+let jsonMsg = "",
+  msg = {};
+
 QAll(".input").forEach(inp => {
   inp.addEventListener("input", function() {
     updateStatusMsg();
@@ -24,27 +27,24 @@ QAll(".input").forEach(inp => {
       Q(".opt-for-toast").classList.toggle("hide");
       Q(".footer-label").classList.toggle("hide");
       Q(".text-label").classList.toggle("hide");
-    } else if (this.value == "warning" || this.value == "question")
-      Q(".cancel-button").checked = true;
-    else Q(".cancel-button").checked = false;
+    } else if (this.value == "warning" || this.value == "question") Q(".cancel-button").checked = true;
+    // else Q(".cancel-button").checked = false;
   });
 });
 
 Q(".send-message").onclick = function() {
   const sendBtn = this;
 
+  msg = {
+    type: Q(".message-type").value,
+    title: Q(".message-title").value.trim(),
+    text: Q(".message-text").value.trim(),
+    footer: Q(".message-footer").value.trim(),
+    modalType: Q(".modal-type").value,
+    position: Q(".modal-position").value,
+    showCancelButton: Q(".cancel-button").checked
+  };
   sendBtn.disabled = true;
-
-  let jsonMsg,
-    msg = {
-      type: Q(".message-type").value,
-      title: Q(".message-title").value.trim(),
-      text: Q(".message-text").value.trim(),
-      footer: Q(".message-footer").value.trim(),
-      modalType: Q(".modal-type").value,
-      position: Q(".modal-position").value,
-      showCancelButton: Q(".cancel-button").checked
-    };
 
   if (msg.modalType == "toast") {
     msg.timer = Q(".timer").value;
@@ -66,6 +66,20 @@ Q(".send-message").onclick = function() {
       );
     sendBtn.disabled = false;
   }, 350);
+};
+
+Q(".quit").onclick = function() {
+  msg = {
+    type: "question",
+    title: "Quit",
+    html: "Are you sure you want to quit and exit the <b>main</b> process?",
+    position: Q(".modal-position").value,
+    showCancelButton: true,
+    confirmButtonText: 'Yes, please',
+    cancelButtonText: "Please, don't"
+  };
+  jsonMsg = JSON.stringify(msg);
+  ipcRenderer.sendSync("quit", jsonMsg);
 };
 
 updateStatusMsg(`

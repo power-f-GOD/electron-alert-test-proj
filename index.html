@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Hello, Electron-Alert!</title>
+    <title>ElectronAlert</title>
     <link rel="stylesheet" type="text/css" href="./renderer.css" />
     <!-- You can also require other files to run in this process -->
     <script src="./renderer.js" defer></script>
@@ -43,7 +43,7 @@
         </select>
       </span>
     </label>
-    <label>
+    <!-- <label> -->
       Modal options:
       <span class="black">
         Position:
@@ -78,7 +78,7 @@
           />show-confirm-button
         </span>
       </span>
-    </label>
+    <!-- </label> -->
     <label class='text-label'>
       Message (HTML):<span class="black">*</span>
       <textarea
@@ -95,6 +95,8 @@
       />
     </label>
     <button class="send-message">Send Message</button>
+    or
+    <button class="quit">Quit</button>
     <br /><br />
     <span class="status"></span>
   </body>
