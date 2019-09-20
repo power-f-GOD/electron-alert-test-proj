@@ -113,7 +113,7 @@ app.on("ready", () => {
     e.returnValue = `Hi, <b>${username}</b>! I'm Main. I received your ${msg.type} message. I will electron-${msg.modalType} it to the ${msg.position} of your screen in a second.`;
 
     if (msg.modalType == "toast") {
-      Alert.fireToast({ ...msg, customClass: customClass });
+      Alert.fireToast({ ...msg });
       return;
     }
 
@@ -181,8 +181,7 @@ app.on("ready", () => {
               Alert.fireToast({
                 title: "Thanks for staying!",
                 timer: 3000,
-                position: "top-end",
-                customClass: customClass
+                position: "top-end"
               });
             }
           }, 300);
