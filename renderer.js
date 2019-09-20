@@ -75,7 +75,7 @@ Q(".quit").onclick = function() {
     html: "Are you sure you want to quit app and exit the <b>main</b> process?",
     position: Q(".modal-position").value,
     showCancelButton: true,
-    confirmButtonText: 'Yes, please',
+    confirmButtonText: "Yes, please",
     cancelButtonText: "Please, don't"
   };
   jsonMsg = JSON.stringify(msg);

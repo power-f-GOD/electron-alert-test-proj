@@ -118,26 +118,33 @@ app.on("ready", () => {
   ipcMain.on("quit", (e, msg) => {
     msg = JSON.parse(msg);
     if (!qAlert.isVisible())
-      qAlert.fireWithFrame({ ...msg }, "ElectronAlert - Quit", null, true).then(res => {
-        setTimeout(() => {
-          if (res.value)
-            qAlert
-              .fireWithFrame({
-                title: `Have a nice day, <br />${username}!`,
-                timer: 3000
-              }, 'ElectronAlert - Bye', null, true)
-              .then(() => {
-                process.exit(1);
+      qAlert
+        .fireWithFrame({ ...msg }, "ElectronAlert - Quit", null, true)
+        .then(res => {
+          setTimeout(() => {
+            if (res.value)
+              qAlert
+                .fireWithFrame(
+                  {
+                    title: `Have a nice day, <br />${username}!`,
+                    timer: 3000
+                  },
+                  "ElectronAlert - Bye",
+                  null,
+                  true
+                )
+                .then(() => {
+                  process.exit(1);
+                });
+            else {
+              Alert.fireToast({
+                title: "Welcome back!",
+                timer: 3000,
+                position: "top-end"
               });
-          else {
-            Alert.fireToast({
-              title: "Welcome back!",
-              timer: 3000,
-              position: "top-end"
-            });
-          }
-        }, 300);
-      });
+            }
+          }, 300);
+        });
     e.returnValue = true;
   });
 });
