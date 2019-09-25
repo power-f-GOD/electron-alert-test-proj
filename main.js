@@ -97,6 +97,45 @@ app.on("ready", () => {
     e.returnValue = alert.isVisible();
   });
 
+  ipcMain.on("triggerAlerts", e => {
+    const types = ["success", "error", "warning", "info", "question", "toast"],
+      fonts = ["serif-font", "monospace-font",  "sans-serif-font"];
+    let i = 0;
+
+    const callTriggerer = () => {
+      addCustomClass(fonts[i % fonts.length]);
+
+      let options = {
+          type: types[i],
+          title: `${types[i][0].toUpperCase() + types[i].slice(1)}!`,
+          timer: 3000,
+          customClass: customClass
+        },
+        alert = new Alert(head);
+
+      options.showCancelButton = /warning|question/.test(types[i]);
+
+      if (i % 2 == 0) {
+        options.html = `A sample ${types[i]} alert without frame!`;
+        alert.fireFrameless(options).then(() => callTriggerer());
+      } else if (i == 5) {
+        Alert.fireToast({
+          type: "success",
+          title: "A sample event toast.",
+          showConfirmButton: false,
+          timer: 3000
+        }).then(() => callTriggerer());
+      } else {
+        options.html = `A sample ${types[i]} alert with frame and custom frame title!`;
+        alert.fireWithFrame(options, "Custom Title").then(() => callTriggerer());
+      }
+      i++;
+
+      if (i == types.length) i = 0;
+    };
+    callTriggerer();
+  });
+
   ipcMain.on("message", (e, msg) => {
     msg = JSON.parse(msg);
     addCustomClass(msg.modalFont);
@@ -119,12 +158,22 @@ app.on("ready", () => {
 
     msg.html = msg.text ? msg.text : `Here is a sample ${msg.type} message!`;
     setTimeout(() => {
-      if (!alert.isVisible())
+      if (true || !alert.isVisible())
         alert
-          .fireFrameless({
-            ...msg,
-            customClass: customClass
-          })
+          .fireFrameless(
+            {
+              ...msg,
+              customClass: customClass
+            },
+            null,
+            null,
+            null,
+            {
+              freq: "19.45", // or Eb0
+              type: "sine", // ["sine", "square", "triange", "sawtooth"]
+              duration: "1" // 1 sec
+            }
+          )
           .then(res => {
             if (msg.showCancelButton && /question|warning/.test(msg.type))
               if (res.value)
@@ -134,15 +183,14 @@ app.on("ready", () => {
                   showConfirmButton: false,
                   timer: 3000
                 });
+              // (new Alert(head))
               else
-                setTimeout(() => {
-                  alert.fireFrameless({
-                    type: "error",
-                    title: "Cancelled",
-                    text: "You clicked on the cancel button.",
-                    customClass: customClass
-                  });
-                }, 300);
+                alert.fireFrameless({
+                  type: "error",
+                  title: "Cancelled",
+                  text: "You clicked on the cancel button.",
+                  customClass: customClass
+                });
           });
     }, 350);
   });
@@ -175,7 +223,7 @@ app.on("ready", () => {
                   true
                 )
                 .then(() => {
-                  process.exit(1);
+                  process.exit(0);
                 });
             else {
               Alert.fireToast({

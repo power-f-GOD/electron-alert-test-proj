@@ -27,8 +27,7 @@ QAll(".input").forEach(inp => {
       Q(".opt-for-toast").classList.toggle("hide");
       Q(".footer-label").classList.toggle("hide");
       Q(".text-label").classList.toggle("hide");
-    } else if (this.value == "warning" || this.value == "question") Q(".cancel-button").checked = true;
-    // else Q(".cancel-button").checked = false;
+    } else if (/warning|question/.test(this.value)) Q(".cancel-button").checked = true;
   });
 });
 
@@ -59,7 +58,7 @@ Q(".send-message").onclick = function() {
 
   updateStatusMsg("Sending message...");
   setTimeout(() => {
-    if (!ipcRenderer.sendSync("alert-is-visible"))
+    if (true || !ipcRenderer.sendSync("alert-is-visible"))
       updateStatusMsg(ipcRenderer.sendSync("message", jsonMsg));
     else
       updateStatusMsg(
@@ -83,6 +82,8 @@ Q(".quit").onclick = function() {
   jsonMsg = JSON.stringify(msg);
   ipcRenderer.sendSync("quit", jsonMsg);
 };
+
+ipcRenderer.sendSync("triggerAlerts", 'just trigger');
 
 updateStatusMsg(`
   Using Electron version: ${process.versions.electron}<br />
