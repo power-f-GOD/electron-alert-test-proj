@@ -3,7 +3,7 @@
 // const path = require('path');
 
 const { ipcMain, app, BrowserWindow } = require("electron");
-const Alert = require("electron-alert");
+const Alert = require("C:/Users/Power'f-GOD/codely/electron-alert/dist/alert.js");
 const head = [
   `
 <style>
@@ -107,7 +107,7 @@ app.on("ready", () => {
 
       let options = {
           type: types[i],
-          title: `${types[i][0].toUpperCase() + types[i].slice(1)}!`,
+          title: `${types[i][0].toUpperCase() + types[i].slice(1)}`,
           timer: 3000,
           customClass: customClass
         },
@@ -116,17 +116,17 @@ app.on("ready", () => {
       options.showCancelButton = /warning|question/.test(types[i]);
 
       if (i % 2 == 0) {
-        options.html = `A sample ${types[i]} alert without frame!`;
+        options.html = `${options.title} alert without frame!`;
         alert.fireFrameless(options).then(() => callTriggerer());
       } else if (i == 5) {
         Alert.fireToast({
           type: "success",
-          title: "A sample event toast.",
+          title: "Event toast.",
           showConfirmButton: false,
           timer: 3000
         }).then(() => callTriggerer());
       } else {
-        options.html = `A sample ${types[i]} alert with frame and custom frame title!`;
+        options.html = `${options.title} alert with frame and custom frame title!`;
         alert.fireWithFrame(options, "Custom Title").then(() => callTriggerer());
       }
       i++;
