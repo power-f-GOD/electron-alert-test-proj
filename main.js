@@ -3,7 +3,7 @@
 // const path = require('path');
 
 const { ipcMain, app, BrowserWindow } = require("electron");
-const Alert = require("C:/Users/Power'f-GOD/codely/electron-alert/dist/alert.js");
+const Alert = require("electron-alert");
 const head = [
   `
 <style>
@@ -98,8 +98,16 @@ app.on("ready", () => {
   });
 
   ipcMain.on("triggerAlerts", e => {
-    const types = ["success", "error", "warning", "info", "question", "toast"],
-      fonts = ["serif-font", "monospace-font",  "sans-serif-font"];
+    const types = [
+        "success",
+        "error",
+        null,
+        "warning",
+        "info",
+        "question",
+        "toast"
+      ],
+      fonts = ["serif-font", "monospace-font", "sans-serif-font"];
     let i = 0;
 
     const callTriggerer = () => {
@@ -107,7 +115,8 @@ app.on("ready", () => {
 
       let options = {
           type: types[i],
-          title: `${types[i][0].toUpperCase() + types[i].slice(1)}`,
+          title:
+            types[i] ? `${types[i][0].toUpperCase() + types[i].slice(1)}` : '',
           timer: 3000,
           customClass: customClass
         },
@@ -115,7 +124,11 @@ app.on("ready", () => {
 
       options.showCancelButton = /warning|question/.test(types[i]);
 
-      if (i % 2 == 0) {
+      if (i == 2) {
+        options.background = "#fff url('https://sweetalert2.github.io/images/trees.png')";
+        options.title = `Custom alert with custom background image!`;
+        alert.fireFrameless(options).then(() => callTriggerer());
+      } else if (i % 2 == 0) {
         options.html = `${options.title} alert without frame!`;
         alert.fireFrameless(options).then(() => callTriggerer());
       } else if (i == 5) {
@@ -127,7 +140,9 @@ app.on("ready", () => {
         }).then(() => callTriggerer());
       } else {
         options.html = `${options.title} alert with frame and custom frame title!`;
-        alert.fireWithFrame(options, "Custom Title").then(() => callTriggerer());
+        alert
+          .fireWithFrame(options, "Custom Title")
+          .then(() => callTriggerer());
       }
       i++;
 
