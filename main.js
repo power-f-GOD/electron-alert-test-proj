@@ -161,49 +161,35 @@ app.on("ready", () => {
     }
 
     e.returnValue = `Hi, <b>${username}</b>! I'm Main. I received your ${msg.type} message. I will electron-${msg.modalType} it to the ${msg.position} of your screen in a second.`;
+    msg.html = msg.text ? msg.text : `A sample ${msg.type} message!`;
 
-    if (msg.modalType == "toast") {
-      Alert.fireToast({ ...msg });
-      return;
-    }
+    if (msg.modalType == "toast") Alert.fireToast({ ...msg });
+    else if (!alert.isVisible())
+      alert
+        .fireFrameless({
+          ...msg,
+          customClass: customClass
+        })
+        .then(res => {
+          if (msg.showCancelButton && /question|warning/.test(msg.type)) {
+            const resAlert = new Alert(head);
 
-    msg.html = msg.text ? msg.text : `Here is a sample ${msg.type} message!`;
-    setTimeout(() => {
-      if (true || !alert.isVisible())
-        alert
-          .fireFrameless(
-            {
-              ...msg,
-              customClass: customClass
-            },
-            null,
-            null,
-            null,
-            {
-              freq: "19.45", // or Eb0
-              type: "sine", // ["sine", "square", "triange", "sawtooth"]
-              duration: "1" // 1 sec
-            }
-          )
-          .then(res => {
-            if (msg.showCancelButton && /question|warning/.test(msg.type))
-              if (res.value)
-                Alert.fireToast({
-                  type: "success",
-                  title: "Success! You clicked OK.",
-                  showConfirmButton: false,
-                  timer: 3000
-                });
-              // (new Alert(head))
-              else
-                alert.fireFrameless({
-                  type: "error",
-                  title: "Cancelled",
-                  text: "You clicked on the cancel button.",
-                  customClass: customClass
-                });
-          });
-    }, 350);
+            if (res.value)
+              resAlert.fireFrameless({
+                type: "success",
+                title: "Success",
+                text: "You clicked on the OK button.",
+                customClass: customClass
+              });
+            else
+              resAlert.fireFrameless({
+                type: "error",
+                title: "Cancelled",
+                text: "You clicked on the cancel button.",
+                customClass: customClass
+              });
+          }
+        });
   });
 
   ipcMain.on("quit", (e, msg) => {
