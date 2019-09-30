@@ -78,6 +78,56 @@ const createWindow = () => {
 // Some APIs can only be used after this event occurs.
 app.on("ready", () => {
   createWindow();
+
+  let i = 0;
+  const types = [
+    "success",
+    "error",
+    null,
+    "warning",
+    "info",
+    "question",
+    "toast"
+  ];
+  const fonts = ["serif-font", "monospace-font", "sans-serif-font"];
+
+  //this is for the somewhat alert gif's sample
+  const callTriggerer = () => {
+    addCustomClass(fonts[i % fonts.length]);
+
+    let options = {
+      type: types[i],
+      title: types[i] ? `${types[i][0].toUpperCase() + types[i].slice(1)}` : "",
+      timer: 3000,
+      customClass: customClass
+    };
+    let alert = new Alert(head);
+
+    options.showCancelButton = /warning|question/.test(types[i]);
+
+    if (types[i] === null) {
+      options.background =
+        "#fff url('https://sweetalert2.github.io/images/trees.png')";
+      options.title = `Custom alert with custom background image!`;
+      alert.fireFrameless(options).then(() => callTriggerer());
+    } else if (types[i] == "toast") {
+      Alert.fireToast({
+        type: "success",
+        title: "Event toast.",
+        showConfirmButton: false,
+        timer: 3000
+      }).then(() => callTriggerer());
+    } else if (i % 2 == 0) {
+      options.html = `${options.title} alert without frame!`;
+      alert.fireFrameless(options).then(() => callTriggerer());
+    } else {
+      options.html = `${options.title} alert with frame and custom frame title!`;
+      alert.fireWithFrame(options, "Custom Title").then(() => callTriggerer());
+    }
+    i = i == types.length - 1 ? 0 : ++i;
+  };
+  callTriggerer();
+
   Alert.fireToast({
     title: `Logged on as ${username}`,
     timer: 3000,
@@ -95,60 +145,6 @@ app.on("ready", () => {
 
   ipcMain.on("alert-is-visible", e => {
     e.returnValue = alert.isVisible();
-  });
-
-  ipcMain.on("triggerAlerts", e => {
-    const types = [
-        "success",
-        "error",
-        null,
-        "warning",
-        "info",
-        "question",
-        "toast"
-      ],
-      fonts = ["serif-font", "monospace-font", "sans-serif-font"];
-    let i = 0;
-
-    const callTriggerer = () => {
-      addCustomClass(fonts[i % fonts.length]);
-
-      let options = {
-          type: types[i],
-          title:
-            types[i] ? `${types[i][0].toUpperCase() + types[i].slice(1)}` : '',
-          timer: 3000,
-          customClass: customClass
-        },
-        alert = new Alert(head);
-
-      options.showCancelButton = /warning|question/.test(types[i]);
-
-      if (i == 2) {
-        options.background = "#fff url('https://sweetalert2.github.io/images/trees.png')";
-        options.title = `Custom alert with custom background image!`;
-        alert.fireFrameless(options).then(() => callTriggerer());
-      } else if (i % 2 == 0) {
-        options.html = `${options.title} alert without frame!`;
-        alert.fireFrameless(options).then(() => callTriggerer());
-      } else if (i == 5) {
-        Alert.fireToast({
-          type: "success",
-          title: "Event toast.",
-          showConfirmButton: false,
-          timer: 3000
-        }).then(() => callTriggerer());
-      } else {
-        options.html = `${options.title} alert with frame and custom frame title!`;
-        alert
-          .fireWithFrame(options, "Custom Title")
-          .then(() => callTriggerer());
-      }
-      i++;
-
-      if (i == types.length) i = 0;
-    };
-    callTriggerer();
   });
 
   ipcMain.on("message", (e, msg) => {

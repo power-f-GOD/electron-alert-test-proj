@@ -58,7 +58,7 @@ Q(".send-message").onclick = function() {
 
   updateStatusMsg("Sending message...");
   setTimeout(() => {
-    if (true || !ipcRenderer.sendSync("alert-is-visible"))
+    if (!ipcRenderer.sendSync("alert-is-visible"))
       updateStatusMsg(ipcRenderer.sendSync("message", jsonMsg));
     else
       updateStatusMsg(
@@ -82,8 +82,6 @@ Q(".quit").onclick = function() {
   jsonMsg = JSON.stringify(msg);
   ipcRenderer.sendSync("quit", jsonMsg);
 };
-
-ipcRenderer.sendSync("triggerAlerts", 'just trigger');
 
 updateStatusMsg(`
   Using Electron version: ${process.versions.electron}<br />
