@@ -111,40 +111,35 @@ app.on("ready", () => {
     }
 
     e.returnValue = `Hi, <b>${username}</b>! I'm Main. I received your ${msg.type} message. I will electron-${msg.modalType} it to the ${msg.position} of your screen in a second.`;
+    msg.html = msg.text ? msg.text : `A sample ${msg.type} message!`;
 
-    if (msg.modalType == "toast") {
-      Alert.fireToast({ ...msg });
-      return;
-    }
+    if (msg.modalType == "toast") Alert.fireToast({ ...msg });
+    else if (!alert.isVisible())
+      alert
+        .fireFrameless({
+          ...msg,
+          customClass: customClass
+        })
+        .then(res => {
+          if (msg.showCancelButton && /question|warning/.test(msg.type)) {
+            const resAlert = new Alert(head);
 
-    msg.html = msg.text ? msg.text : `Here is a sample ${msg.type} message!`;
-    setTimeout(() => {
-      if (!alert.isVisible())
-        alert
-          .fireFrameless({
-            ...msg,
-            customClass: customClass
-          })
-          .then(res => {
-            if (msg.showCancelButton && /question|warning/.test(msg.type))
-              if (res.value)
-                Alert.fireToast({
-                  type: "success",
-                  title: "Success! You clicked OK.",
-                  showConfirmButton: false,
-                  timer: 3000
-                });
-              else
-                setTimeout(() => {
-                  alert.fireFrameless({
-                    type: "error",
-                    title: "Cancelled",
-                    text: "You clicked on the cancel button.",
-                    customClass: customClass
-                  });
-                }, 300);
-          });
-    }, 350);
+            if (res.value)
+              resAlert.fireFrameless({
+                type: "success",
+                title: "Success",
+                text: "You clicked on the OK button.",
+                customClass: customClass
+              });
+            else
+              resAlert.fireFrameless({
+                type: "error",
+                title: "Cancelled",
+                text: "You clicked on the cancel button.",
+                customClass: customClass
+              });
+          }
+        });
   });
 
   ipcMain.on("quit", (e, msg) => {
@@ -161,30 +156,28 @@ app.on("ready", () => {
           true
         )
         .then(res => {
-          setTimeout(() => {
-            if (res.value)
-              quitAlert
-                .fireWithFrame(
-                  {
-                    title: `Have a nice day,<br />${username}!`,
-                    timer: 3000,
-                    customClass: customClass
-                  },
-                  "ElectronAlert - Bye",
-                  null,
-                  true
-                )
-                .then(() => {
-                  process.exit(1);
-                });
-            else {
-              Alert.fireToast({
-                title: "Thanks for staying!",
-                timer: 3000,
-                position: "top-end"
+          if (res.value)
+            new Alert(head)
+              .fireWithFrame(
+                {
+                  title: `Have a nice day,<br />${username}!`,
+                  timer: 3000,
+                  customClass: customClass
+                },
+                "ElectronAlert - Bye",
+                null,
+                true
+              )
+              .then(() => {
+                process.exit(0);
               });
-            }
-          }, 300);
+          else {
+            Alert.fireToast({
+              title: "Thanks for staying!",
+              timer: 3000,
+              position: "top-end"
+            });
+          }
         });
     e.returnValue = true;
   });
