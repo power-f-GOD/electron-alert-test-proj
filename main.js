@@ -3,7 +3,8 @@
 // const path = require('path');
 
 const { ipcMain, app, BrowserWindow } = require("electron");
-const Alert = require("electron-alert");
+// const Alert = require("electron-alert");
+const Alert = require("../electron-alert/dist/Alert.js");
 const head = [
   `
 <style>
@@ -34,7 +35,6 @@ const alert = new Alert(head),
     cancelButton: null,
     footer: null
   };
-
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
@@ -114,7 +114,7 @@ app.on("ready", () => {
     msg.html = msg.text ? msg.text : `A sample ${msg.type} message!`;
 
     if (msg.modalType == "toast") Alert.fireToast({ ...msg });
-    else if (!alert.isVisible())
+    else if (!alert.isVisible()) {
       alert
         .fireFrameless({
           ...msg,
@@ -122,24 +122,17 @@ app.on("ready", () => {
         })
         .then(res => {
           if (msg.showCancelButton && /question|warning/.test(msg.type)) {
-            const resAlert = new Alert(head);
-
-            if (res.value)
-              resAlert.fireFrameless({
-                type: "success",
-                title: "Success",
-                text: "You clicked on the OK button.",
-                customClass: customClass
-              });
-            else
-              resAlert.fireFrameless({
-                type: "error",
-                title: "Cancelled",
-                text: "You clicked on the cancel button.",
-                customClass: customClass
-              });
+            new Alert(head).fireFrameless({
+              type: res.value ? "success" : "error",
+              title: res.value ? "Success" : "Cancelled",
+              text: `You clicked on the ${
+                res.value ? "OK" : Alert.DismissReason.cancel
+              } button.`,
+              customClass: customClass
+            });
           }
         });
+    }
   });
 
   ipcMain.on("quit", (e, msg) => {
@@ -147,31 +140,29 @@ app.on("ready", () => {
     msg.position = "center";
     addCustomClass(msg.modalFont);
 
-    if (!quitAlert.isVisible())
+    if (!quitAlert.isVisible()) {
       quitAlert
-        .fireWithFrame(
-          { ...msg, customClass: customClass },
-          "ElectronAlert - Quit",
-          null,
-          true
-        )
+        .fireWithFrame({
+          swalOptions: { ...msg, customClass: customClass },
+          title: "ElectronAlert - Quit",
+          alwaysOnTop: true
+        })
         .then(res => {
-          if (res.value)
+          if (res.value) {
             new Alert(head)
-              .fireWithFrame(
-                {
+              .fireWithFrame({
+                swalOptions: {
                   title: `Have a nice day,<br />${username}!`,
                   timer: 3000,
                   customClass: customClass
                 },
-                "ElectronAlert - Bye",
-                null,
-                true
-              )
+                title: "ElectronAlert - Bye",
+                alwaysOnTop: true
+              })
               .then(() => {
                 process.exit(0);
               });
-          else {
+          } else {
             Alert.fireToast({
               title: "Thanks for staying!",
               timer: 3000,
@@ -179,6 +170,7 @@ app.on("ready", () => {
             });
           }
         });
+    }
     e.returnValue = true;
   });
 });
@@ -201,5 +193,6 @@ app.on("activate", () => {
 });
 
 function addCustomClass(className) {
-  for (let prop in customClass) customClass[prop] = className;
+  for (let prop in customClass)
+    if (customClass.hasOwnProperty(prop)) customClass[prop] = className;
 }
